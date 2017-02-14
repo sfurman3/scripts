@@ -1,0 +1,10 @@
+#!/usr/local/bin/python
+
+# Print every directory in the $PATH environment variable on a separate line
+import sys
+import os
+
+path = os.environ.get("PATH")
+
+for s in path.split(':'):
+    print s

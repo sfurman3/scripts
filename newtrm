@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Open a new terminal window at the given directory
+# Defaults to the working directory if none is specified
+
+dir="."
+
+if [[ "$1" == "-h" ]]; then
+cat <<- EOF
+
+    'newtrm' opens a new terminal instance at the specified directory (or the
+    current directory if none is specified). Both absolute and relative paths
+    may be used.
+
+    Note: This script is specific to machines running mac os x.
+
+EOF
+exit
+fi
+
+if [[ -n "$1" ]]; then
+    dir="$1"
+fi
+
+open -a terminal "$dir"

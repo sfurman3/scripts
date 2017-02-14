@@ -1,0 +1,147 @@
+#!/usr/local/bin/bash
+
+# 'bsdcolors' displays the color coding (i.e. the colors of each filetype)
+# specified by the LSCOLORS environment variable on a BSD-based operating
+# system. See "man ls" for more info on LSCOLORS.
+#
+# Also displays an enumerated list of the character pairs in LSCOLORS, each of
+# which corresponds to the numbered filetypes.
+#
+# The "-c" flag replaces the output with a key indicating what color is
+# represented by each character in LSCOLORS.
+
+# Text styles
+none="\033[0m"
+bold="\033[1m"
+
+# Foreground colors
+black="\033[30m"
+red="\033[31m"
+green="\033[32m"
+yellow="\033[33m"
+blue="\033[34m"
+magenta="\033[35m"
+cyan="\033[36m"
+white="\033[37m"
+
+# Background colors
+b_black="\033[40m"
+b_red="\033[41m"
+b_green="\033[42m"
+b_yellow="\033[43m"
+b_blue="\033[44m"
+b_magenta="\033[45m"
+b_cyan="\033[46m"
+b_white="\033[47m"
+
+# Set the foreground color based on the 2 character pair
+function setforeground {
+    case $1 in
+        a) fg=$black;;
+        b) fg=$red;;
+        c) fg=$green;;
+        d) fg=$yellow;;
+        e) fg=$blue;;
+        f) fg=$magenta;;
+        g) fg=$cyan;;
+        h) fg=$white;;
+        A) fg=$bold$black;;
+        B) fg=$bold$red;;
+        C) fg=$bold$green;;
+        D) fg=$bold$yellow;;
+        E) fg=$bold$blue;;
+        F) fg=$bold$magenta;;
+        G) fg=$bold$cyan;;
+        H) fg=$bold$white;;
+        *) fg="";;
+    esac
+}
+
+# Set the background color based on the 2 character pair
+function setbackground {
+    case $1 in
+        a|A) bg=$b_black;;
+        b|B) bg=$b_red;;
+        c|C) bg=$b_green;;
+        d|D) bg=$b_yellow;;
+        e|E) bg=$b_blue;;
+        f|F) bg=$b_magenta;;
+        g|G) bg=$b_cyan;;
+        h|H) bg=$b_white;;
+        *) bg="";;
+    esac
+}
+
+if [[ -z $1 ]]; then # No arguments were provided
+    colors=$LSCOLORS
+    attributes=(
+        "directory"
+        "symbolic link"
+        "socket"
+        "pipe"
+        "executable"
+        "block special"
+        "character special"
+        "executable with setuid bit set"
+        "executable with setgid bit set"
+        "directory writable to others, with sticky bit"
+        "directory writable to others, without sticky bit"
+    )
+
+    echo -n '$LSCOLORS: '
+    for ((i=1, j=0; i <= 11; i++, j+=2)); do
+        echo -n "$i:"${LSCOLORS:j:2}" "
+    done
+    echo
+
+    fg=""
+    bg=""
+    i=1
+    for attr in "${attributes[@]}"; do
+        setforeground "${colors:0:1}"
+        setbackground "${colors:1:1}"
+        printf "%2d. " $i
+        echo -e -n $fg$bg"$attr"$none"\n"
+        colors="${colors:2}"
+        ((i++))
+    done
+elif [ "$1" == "-c" ]; then # "-c": Display a key of color codes
+    cols=(
+        $bold"a"$none"     black"
+        $bold"b"$none"     red"
+        $bold"c"$none"     green"
+        $bold"d"$none"     brown"
+        $bold"e"$none"     blue"
+        $bold"f"$none"     magenta"
+        $bold"g"$none"     cyan"
+        $bold"h"$none"     light grey"
+        $bold"A"$none"     bold black, usually shows up as dark grey"
+        $bold"B"$none"     bold red"
+        $bold"C"$none"     bold green"
+        $bold"D"$none"     bold brown, usually shows up as yellow"
+        $bold"E"$none"     bold blue"
+        $bold"F"$none"     bold magenta"
+        $bold"G"$none"     bold cyan"
+        $bold"H"$none"     bold light grey; looks like bright white"
+        $bold"x"$none"     default foreground or background"
+    )
+    for s in "${cols[@]}"; do
+        echo -e "    $s"
+    done
+elif [ "$1" == "-h" ]; then # "-h": Help message
+cat <<- EOF
+
+    'bsdcolors' displays the color coding (i.e. the colors of each filetype)
+    specified by the LSCOLORS environment variable on a BSD-based operating
+    system. See "man ls" for more info on LSCOLORS.
+    
+    Also displays an enumerated list of the character pairs in LSCOLORS,
+    each of which corresponds to the numbered filetypes.
+    
+    The "-c" flag replaces the output with a key indicating what color is
+    represented by each character in LSCOLORS.
+
+EOF
+else
+    echo "Unrecognized argument: \"$1\""
+fi
