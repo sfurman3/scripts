@@ -4,7 +4,11 @@
 import sys
 import os
 
-path = os.environ.get("PATH")
+if len(sys.argv) > 1 and sys.argv[1] == "-h":
+    print ("\n    'showpath' (in order) displays all directories in the" +
+           " $PATH variable\n")
+else:
+    path = os.environ.get("PATH")
 
-for s in path.split(':'):
-    print s
+    for s in path.split(':'):
+        print s
