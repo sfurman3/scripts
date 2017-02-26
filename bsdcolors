@@ -72,7 +72,53 @@ function setbackground {
     esac
 }
 
-if [[ -z $1 ]]; then # No arguments were provided
+# Parse command line flags
+while getopts :ch option; do
+    case $option in
+        c) com=color_key;;
+        h) com=hlp;;
+        ?) echo "unrecognized flag -$OPTARG"; exit 1;;
+    esac
+done
+
+if [ $com == "hlp" ]; then # Help message
+cat <<- EOF
+
+    'bsdcolors' displays the color coding (i.e. the colors of each filetype)
+    specified by the LSCOLORS environment variable on a BSD-based operating
+    system. See "man ls" for more info on LSCOLORS.
+    
+    Also displays an enumerated list of the character pairs in LSCOLORS,
+    each of which corresponds to the numbered filetypes.
+    
+    The "-c" flag replaces the output with a key indicating what color is
+    represented by each character in LSCOLORS.
+
+EOF
+elif [ $com == "color_key" ]; then # Display a key of color codes
+    cols=(
+        $bold"a"$none"     black"
+        $bold"b"$none"     red"
+        $bold"c"$none"     green"
+        $bold"d"$none"     brown"
+        $bold"e"$none"     blue"
+        $bold"f"$none"     magenta"
+        $bold"g"$none"     cyan"
+        $bold"h"$none"     light grey"
+        $bold"A"$none"     bold black, usually shows up as dark grey"
+        $bold"B"$none"     bold red"
+        $bold"C"$none"     bold green"
+        $bold"D"$none"     bold brown, usually shows up as yellow"
+        $bold"E"$none"     bold blue"
+        $bold"F"$none"     bold magenta"
+        $bold"G"$none"     bold cyan"
+        $bold"H"$none"     bold light grey; looks like bright white"
+        $bold"x"$none"     default foreground or background"
+    )
+    for s in "${cols[@]}"; do
+        echo -e "    $s"
+    done
+else # No arguments were provided
     colors=$LSCOLORS
     attributes=(
         "directory"
@@ -105,43 +151,4 @@ if [[ -z $1 ]]; then # No arguments were provided
         colors="${colors:2}"
         ((i++))
     done
-elif [ "$1" == "-c" ]; then # "-c": Display a key of color codes
-    cols=(
-        $bold"a"$none"     black"
-        $bold"b"$none"     red"
-        $bold"c"$none"     green"
-        $bold"d"$none"     brown"
-        $bold"e"$none"     blue"
-        $bold"f"$none"     magenta"
-        $bold"g"$none"     cyan"
-        $bold"h"$none"     light grey"
-        $bold"A"$none"     bold black, usually shows up as dark grey"
-        $bold"B"$none"     bold red"
-        $bold"C"$none"     bold green"
-        $bold"D"$none"     bold brown, usually shows up as yellow"
-        $bold"E"$none"     bold blue"
-        $bold"F"$none"     bold magenta"
-        $bold"G"$none"     bold cyan"
-        $bold"H"$none"     bold light grey; looks like bright white"
-        $bold"x"$none"     default foreground or background"
-    )
-    for s in "${cols[@]}"; do
-        echo -e "    $s"
-    done
-elif [ "$1" == "-h" ]; then # "-h": Help message
-cat <<- EOF
-
-    'bsdcolors' displays the color coding (i.e. the colors of each filetype)
-    specified by the LSCOLORS environment variable on a BSD-based operating
-    system. See "man ls" for more info on LSCOLORS.
-    
-    Also displays an enumerated list of the character pairs in LSCOLORS,
-    each of which corresponds to the numbered filetypes.
-    
-    The "-c" flag replaces the output with a key indicating what color is
-    represented by each character in LSCOLORS.
-
-EOF
-else
-    echo "Unrecognized argument: \"$1\""
 fi
