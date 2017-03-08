@@ -13,7 +13,6 @@ main() {
             color=""
         fi
     done
-    echo
 }
 
 # Print the attribute name from $LS_COLORS using its assigned ANSI color escape
@@ -44,11 +43,7 @@ print_color() {
         fi) name="normal file";;
         no) name="global default";;
     esac
-    if [[ ${name:0:1} != "*" ]]; then
-        echo -e "\033[$escape_code"m$name"\033[0m"
-    else
-        echo -n -e "\033[$escape_code"m$name"\033[0m "
-    fi
+    echo -e "\033[$escape_code"m$name"\033[0m"
 }
 
 main
