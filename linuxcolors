@@ -1,0 +1,54 @@
+#!/bin/bash
+colors="$LS_COLORS"
+color="${colors%%:*}"
+
+# Print the attribute color for each attribute in $LS_COLORS
+main() {
+    while [[ -n "$color" ]]; do
+        print_color $color
+        colors="${colors#*:}"
+        color="${colors%%:*}"
+        if [[ $color == $colors ]]; then
+            print_color $color
+            color=""
+        fi
+    done
+    echo
+}
+
+# Print the attribute name from $LS_COLORS using its assigned ANSI color escape
+# Replaces attribute abbreviations with a description (e.g. "di" becomes
+# "directory").
+print_color() {
+    name="${1%%=*}"
+    escape_code="${1#*=}"
+    case $name in
+        di) name="directory";;
+        ln) name="symbolic link";;
+        so) name="socket";;
+        pi) name="pipe";;
+        ex) name="executable";;
+        bd) name="block device driver";;
+        cd) name="character device driver";;
+        su) name="setuid (executable with setuid bit set)";;
+        sg) name="setgid (executable with setgid bit set)";;
+        tw) name="sticky other writable (directory writable to others, with sticky bit)";;
+        ow) name="other writable (directory writable to others, without sticky bit)";;
+        rs) name="reset to \"normal\" color";;
+        mh) name="multi-hardlink (regular file with more than one link)";;
+        do) name="door";;
+        or) name="orphan symlink (symlink to nonexistent file)";;
+        mi) name="missing file";;
+        ca) name="file with capability";;
+        st) name="sticky bit";;
+        fi) name="normal file";;
+        no) name="global default";;
+    esac
+    if [[ ${name:0:1} != "*" ]]; then
+        echo -e "\033[$escape_code"m$name"\033[0m"
+    else
+        echo -n -e "\033[$escape_code"m$name"\033[0m "
+    fi
+}
+
+main
