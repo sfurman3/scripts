@@ -2,17 +2,40 @@
 colors="$LS_COLORS"
 color="${colors%%:*}"
 
+# Print help text
+print_help() {
+cat << EOF
+Print the names of each attribute in the \$LS_COLORS environment variable,
+formatting each according to its assigned ANSI escape code.
+
+    -n [num]: print the first [num] attributes obtained from \$LS_COLORS
+EOF
+}
+
+# Collect command-line flags
+while getopts :n:h opt; do
+    case $opt in
+        n) num=$OPTARG;;
+        h) print_help; exit 0;;
+        ?) echo "error: unrecognized flag -$OPTARG"; exit 1;;
+    esac
+done
+
 # Print the attribute color for each attribute in $LS_COLORS
 main() {
-    while [[ -n "$color" ]]; do
-        print_color $color
-        colors="${colors#*:}"
-        color="${colors%%:*}"
-        if [[ $color == $colors ]]; then
+    if [[ -z $num ]]; then
+        while [[ -n "$color" ]]; do
             print_color $color
-            color=""
-        fi
-    done
+            colors="${colors#*:}"
+            color="${colors%%:*}"
+            if [[ $color == $colors ]]; then
+                print_color $color
+                color=""
+            fi
+        done
+    else
+        bash "$0" | head -n $num
+    fi
 }
 
 # Print the attribute name from $LS_COLORS using its assigned ANSI color escape
