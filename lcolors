@@ -17,6 +17,7 @@ while getopts :n:h opt; do
     case $opt in
         n) num=$OPTARG;;
         h) print_help; exit 0;;
+        :) echo "missing argument for option -$OPTARG"; exit 1;;
         ?) echo "error: unrecognized flag -$OPTARG"; exit 1;;
     esac
 done
