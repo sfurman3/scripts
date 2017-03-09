@@ -9,22 +9,39 @@ Print the names of each attribute in the \$LS_COLORS environment variable,
 formatting each according to its assigned ANSI escape code.
 
     -n [num]: print the first [num] attributes obtained from \$LS_COLORS
+    -f [key]: search the output of "$(basename $0)" for strings that match [key]
+
+NOTE: Using -f and -n together selects the first [num] results of a search
 EOF
 }
 
+# Disable the glob
+set -f
+
 # Collect command-line flags
-while getopts :n:h opt; do
+while getopts :f:n:h opt; do
     case $opt in
+        f) search=$OPTARG;;
         n) num=$OPTARG;;
         h) print_help; exit 0;;
-        :) echo "missing argument for option -$OPTARG"; exit 1;;
+        :) case $OPTARG in # { Missing argument --> display an error message }
+               f) typ="string (search key)";;
+               n) typ="int (number of entries)";;
+           esac
+           echo "missing argument for option -$OPTARG : $typ"; exit 1;;
         ?) echo "error: unrecognized flag -$OPTARG"; exit 1;;
     esac
 done
 
 # Print the attribute color for each attribute in $LS_COLORS
 main() {
-    if [[ -z $num ]]; then
+    if [[ -n $num && -n $search ]]; then # Select first $num results of search
+        bash "$0" | grep $search | head -n $num
+    elif [[ -n $num ]]; then
+        bash "$0" | head -n $num
+    elif [[ -n $search ]]; then
+        bash "$0" | grep $search
+    else
         while [[ -n "$color" ]]; do
             print_color $color
             colors="${colors#*:}"
@@ -34,8 +51,6 @@ main() {
                 color=""
             fi
         done
-    else
-        bash "$0" | head -n $num
     fi
 }
 
