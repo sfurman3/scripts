@@ -4,11 +4,11 @@
 # specified by the LSCOLORS environment variable on a BSD-based operating
 # system. See "man ls" for more info on LSCOLORS.
 #
-# Also displays an enumerated list of the character pairs in LSCOLORS, each of
-# which corresponds to the numbered filetypes.
+# bsdcolors also displays an enumerated list of the character pairs in
+# LSCOLORS, each of which corresponds to the numbered filetypes.
 #
 # The "-c" flag replaces the output with a key indicating what color is
-# represented by each character in LSCOLORS.
+# represented by each character in the LSCOLORS variable.
 
 # Text styles
 none="\033[0m"
