@@ -5,13 +5,14 @@ color="${colors%%:*}"
 # Print help text
 print_help() {
 cat << EOF
-Print the names of each attribute in the \$LS_COLORS environment variable,
-formatting each according to its assigned ANSI escape code.
+lscolors prints the names of each attribute in the \$LS_COLORS environment
+variable, formatting each according to its assigned ANSI escape code.
 
     -n [num]: print the first [num] attributes obtained from \$LS_COLORS
-    -f [key]: search the output of "$(basename $0)" for strings that match [key]
+    -f [key]: search the output of this script for strings that match [key]
 
 NOTE: Using -f and -n together selects the first [num] results of a search
+NOTE: This script is intended for systems (mainly Linux) that use \$LS_COLORS.
 EOF
 }
 
